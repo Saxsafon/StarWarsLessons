@@ -13,6 +13,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import design.alex.starwars.model.entity.People;
+import design.alex.starwars.model.rest.RawPeople;
 import design.alex.starwars.model.rest.RawResult;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -22,7 +27,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class HomeActivity
         extends
-        AppCompatActivity {
+        AppCompatActivity implements HeroRecyclerAdapter.Listener {
 
     private static final int LIMIT = 10;
 
@@ -35,17 +40,17 @@ public class HomeActivity
     private HeroRecyclerAdapter mAdapter;
     private RecyclerScrollListener mScrollListener;
 
-    private Observer<RawResult> mRestObserver = new Observer<RawResult>() {
+    private Observer<List<People>> mRestObserver = new Observer<List<People>>() {
         @Override
         public void onSubscribe(Disposable d) {
             Log.d("TAG", "onSubscribe");
         }
 
         @Override
-        public void onNext(RawResult rawResult) {
+        public void onNext(List<People> peopleList) {
             mAdapter.hideProgress();
-            mScrollListener.setFullLoaded(rawResult.getResults().size() < LIMIT);
-            mAdapter.addAll(rawResult.getResults());
+            mScrollListener.setFullLoaded(peopleList.size() < LIMIT);
+            mAdapter.addAll(peopleList);
             showContent();
             Log.d("TAG", "onNext");
         }
@@ -65,6 +70,11 @@ public class HomeActivity
     };
 
     @Override
+    public void onClickPeople(People people) {
+        startCardActivity(people.getId());
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
@@ -75,9 +85,9 @@ public class HomeActivity
         loadData(1);
     }
 
-    private void startCardActivity(String name) {
+    private void startCardActivity(Long id) {
         Intent intent = new Intent(this, CardActivity.class);
-        intent.putExtra(CardActivity.PARAM_NAME, name);
+        intent.putExtra(CardActivity.PARAM_ID, id);
         startActivity(intent);
     }
 
@@ -90,6 +100,7 @@ public class HomeActivity
 
     private void setupList() {
         mAdapter = new HeroRecyclerAdapter();
+        mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -121,9 +132,40 @@ public class HomeActivity
         ((App)getApplication())
                 .getPeopleRestService()
                 .getAllPeoples(page)
+                .map(result -> saveDb(result))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mRestObserver);
+    }
+
+    private List<People> saveDb(RawResult result) {
+        List<People> peopleList = new ArrayList<>();
+        if (result != null && result.getResults() != null && !result.getResults().isEmpty()) {
+            for (RawPeople rawPeople : result.getResults()) {
+                People people = new People();
+                String id = rawPeople.getUrl().replaceAll("[\\D+]","");
+                people.setId(Long.parseLong(id));
+                people.setImageUrl(
+                        String.format("https://starwars-visualguide.com/assets/img/characters/%s.jpg", people.getId())
+                );
+                people.setName(rawPeople.getName());
+                try {
+                    people.setHeight(Integer.parseInt(rawPeople.getHeight()));
+                } catch (NumberFormatException ignored) {}
+                try {
+                    people.setMass(Integer.getInteger(rawPeople.getMass()));
+                } catch (NumberFormatException ignored) {}
+
+                people.setHairColor(rawPeople.getHairColor());
+                people.setEyeColor(rawPeople.getEyeColor());
+                people.setBirthYear(rawPeople.getBirthYear());
+                people.setGender(rawPeople.getGender());
+                people.setHomeWorld(rawPeople.getHoumeWorld());
+                ((App)getApplication()).getAppDatabase().getPeopleDao().insert(people);
+                peopleList.add(people);
+            }
+        }
+        return peopleList;
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+
 @Entity(tableName = "peoples", indices = { @Index("id")})
 public class People {
 
@@ -131,4 +132,6 @@ public class People {
     public void setImageUrl(String imageUrl) {
         mImageUrl = imageUrl;
     }
+
+    public static class Empty extends People { }
 }

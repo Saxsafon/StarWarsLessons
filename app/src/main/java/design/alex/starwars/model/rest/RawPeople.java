@@ -113,8 +113,6 @@ public class RawPeople {
     public void setUrl(String url) {
         mUrl = url;
     }
-
-    public static class Empty extends RawPeople { }
 }
 
 

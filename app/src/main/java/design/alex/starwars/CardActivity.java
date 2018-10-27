@@ -32,7 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class CardActivity extends AppCompatActivity {
 
-    public static final String PARAM_NAME = "star.wars.card.param.id";
+    public static final String PARAM_ID = "star.wars.card.param.id";
 
     public TextView mPersonNameTextView;
 

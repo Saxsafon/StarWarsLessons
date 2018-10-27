@@ -12,31 +12,42 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import design.alex.starwars.model.entity.People;
 import design.alex.starwars.model.rest.RawPeople;
 
 public class HeroRecyclerAdapter
         extends
         RecyclerView.Adapter {
 
+    public interface Listener {
+
+        void onClickPeople(People people);
+    }
+
     private static final int VIEW_PROGRESS = 1;
     private static final int VIEW_ITEM = 2;
 
-    private List<RawPeople> mPeoples = new ArrayList<>();
+    private List<People> mPeoples = new ArrayList<>();
+    private Listener mListener;
 
-    public void addAll(List<RawPeople> peoples) {
+    public void addAll(List<People> peoples) {
         mPeoples.addAll(peoples);
         notifyDataSetChanged();
     }
 
+    public void setListener(Listener listener) {
+        mListener = listener;
+    }
+
     public void showProgress() {
-        if (mPeoples.isEmpty() || !(mPeoples.get(getItemCount() - 1) instanceof RawPeople.Empty)) {
-            mPeoples.add(new RawPeople.Empty());
+        if (mPeoples.isEmpty() || !(mPeoples.get(getItemCount() - 1) instanceof People.Empty)) {
+            mPeoples.add(new People.Empty());
             notifyItemInserted(getItemCount() - 1);
         }
     }
 
     public void hideProgress() {
-        if (!mPeoples.isEmpty() && mPeoples.get(getItemCount() - 1) instanceof RawPeople.Empty) {
+        if (!mPeoples.isEmpty() && mPeoples.get(getItemCount() - 1) instanceof People.Empty) {
             mPeoples.remove(getItemCount() - 1);
             notifyItemRemoved(getItemCount());
         }
@@ -58,7 +69,7 @@ public class HeroRecyclerAdapter
 
     @Override
     public int getItemViewType(int position) {
-        if (mPeoples.get(position) instanceof RawPeople.Empty) {
+        if (mPeoples.get(position) instanceof People.Empty) {
             return VIEW_PROGRESS;
         } else {
             return VIEW_ITEM;
@@ -69,7 +80,7 @@ public class HeroRecyclerAdapter
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         if (viewHolder instanceof HeroViewHolder) {
             ((HeroViewHolder)viewHolder).setPosition(position);
-            RawPeople people = mPeoples.get(position);
+            People people = mPeoples.get(position);
             ((HeroViewHolder)viewHolder).bind(people);
         }
     }
@@ -81,11 +92,10 @@ public class HeroRecyclerAdapter
 
 
 
-    public static class HeroViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class HeroViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mHeroNameTextView;
         private LinearLayout mContainer;
-
         private int mPosition;
 
         HeroViewHolder(@NonNull View itemView) {
@@ -101,10 +111,12 @@ public class HeroRecyclerAdapter
 
         @Override
         public void onClick(View view) {
-            Log.d("TAG", "mPosition: " + mPosition);
+            if (mListener != null) {
+                mListener.onClickPeople(mPeoples.get(mPosition));
+            }
         }
 
-        public void bind(RawPeople people) {
+        public void bind(People people) {
             mHeroNameTextView.setText(people.getName());
         }
     }
