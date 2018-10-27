@@ -10,44 +10,68 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import design.alex.starwars.model.People;
+import design.alex.starwars.model.rest.RawPeople;
 
 public class HeroRecyclerAdapter
         extends
-        RecyclerView.Adapter<HeroRecyclerAdapter.HeroViewHolder> {
+        RecyclerView.Adapter {
 
-    private Integer mTotalCount;
-    private List<People> mPeoples = new ArrayList<>();
+    private static final int VIEW_PROGRESS = 1;
+    private static final int VIEW_ITEM = 2;
 
-    public void addAll(List<People> peoples) {
+    private List<RawPeople> mPeoples = new ArrayList<>();
+
+    public void addAll(List<RawPeople> peoples) {
         mPeoples.addAll(peoples);
         notifyDataSetChanged();
     }
 
-    public void setTotalCount(Integer totalCount) {
-        mTotalCount = totalCount;
+    public void showProgress() {
+        if (mPeoples.isEmpty() || !(mPeoples.get(getItemCount() - 1) instanceof RawPeople.Empty)) {
+            mPeoples.add(new RawPeople.Empty());
+            notifyItemInserted(getItemCount() - 1);
+        }
     }
 
-    public Integer getTotalCount() {
-        return mTotalCount;
+    public void hideProgress() {
+        if (!mPeoples.isEmpty() && mPeoples.get(getItemCount() - 1) instanceof RawPeople.Empty) {
+            mPeoples.remove(getItemCount() - 1);
+            notifyItemRemoved(getItemCount());
+        }
     }
 
     @NonNull
     @Override
-    public HeroViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_card_wrapper, viewGroup, false);
-        return new HeroViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        if (viewType == VIEW_ITEM) {
+            View view = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.item_card_wrapper, viewGroup, false);
+            return new HeroViewHolder(view);
+        } else {
+            View view = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.item_progress, viewGroup, false);
+            return new ProgressViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HeroViewHolder heroViewHolder, int position) {
-        heroViewHolder.setPosition(position);
-        People people = mPeoples.get(position);
-        heroViewHolder.bind(people);
+    public int getItemViewType(int position) {
+        if (mPeoples.get(position) instanceof RawPeople.Empty) {
+            return VIEW_PROGRESS;
+        } else {
+            return VIEW_ITEM;
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
+        if (viewHolder instanceof HeroViewHolder) {
+            ((HeroViewHolder)viewHolder).setPosition(position);
+            RawPeople people = mPeoples.get(position);
+            ((HeroViewHolder)viewHolder).bind(people);
+        }
     }
 
     @Override
@@ -55,11 +79,9 @@ public class HeroRecyclerAdapter
         return mPeoples.size();
     }
 
-    public static class HeroViewHolder
-            extends
-            RecyclerView.ViewHolder
-            implements
-            View.OnClickListener {
+
+
+    public static class HeroViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView mHeroNameTextView;
         private LinearLayout mContainer;
@@ -82,8 +104,15 @@ public class HeroRecyclerAdapter
             Log.d("TAG", "mPosition: " + mPosition);
         }
 
-        public void bind(People people) {
+        public void bind(RawPeople people) {
             mHeroNameTextView.setText(people.getName());
+        }
+    }
+
+    public static class ProgressViewHolder extends RecyclerView.ViewHolder {
+
+        public ProgressViewHolder(@NonNull View itemView) {
+            super(itemView);
         }
     }
 }

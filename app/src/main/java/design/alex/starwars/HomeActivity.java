@@ -3,7 +3,6 @@ package design.alex.starwars;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -13,19 +12,19 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
-import java.util.List;
+import design.alex.starwars.model.rest.RawResult;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
-import design.alex.starwars.model.Result;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class HomeActivity
         extends
         AppCompatActivity {
+
+    private static final int LIMIT = 10;
 
     FrameLayout mProgressLayout;
     FrameLayout mContentLayout;
@@ -36,6 +35,35 @@ public class HomeActivity
     private HeroRecyclerAdapter mAdapter;
     private RecyclerScrollListener mScrollListener;
 
+    private Observer<RawResult> mRestObserver = new Observer<RawResult>() {
+        @Override
+        public void onSubscribe(Disposable d) {
+            Log.d("TAG", "onSubscribe");
+        }
+
+        @Override
+        public void onNext(RawResult rawResult) {
+            mAdapter.hideProgress();
+            mScrollListener.setFullLoaded(rawResult.getResults().size() < LIMIT);
+            mAdapter.addAll(rawResult.getResults());
+            showContent();
+            Log.d("TAG", "onNext");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            mScrollListener.setLoading(false);
+            showError();
+            Log.d("TAG", "onError");
+        }
+
+        @Override
+        public void onComplete() {
+            mScrollListener.setLoading(false);
+            Log.d("TAG", "onComplete");
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +72,7 @@ public class HomeActivity
         setupList();
         setupListener();
         showProgress();
-        loadData();
+        loadData(1);
     }
 
     private void startCardActivity(String name) {
@@ -89,44 +117,13 @@ public class HomeActivity
         mProgressLayout.setVisibility(View.GONE);
     }
 
-    private void loadData() {
-        ((App)getApplication()).getPeopleRestService()
-                .getAllPeoples(1).enqueue(new Callback<Result>() {
-            @Override
-            public void onResponse(@NonNull Call<Result> call, @NonNull Response<Result> response) {
-                mScrollListener.setLoading(false);
-                if (response.isSuccessful() && response.body() != null) {
-                    mAdapter.setTotalCount(response.body().getCount());
-                    mAdapter.addAll(response.body().getResults());
-                    showContent();
-                } else {
-                    showError();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<Result> call, @NonNull Throwable t) {
-                mScrollListener.setLoading(false);
-                showError();
-            }
-        });
-    }
-
-    private void fetchData(Integer page) {
-        ((App)getApplication()).getPeopleRestService().getAllPeoples(page).enqueue(new Callback<Result>() {
-            @Override
-            public void onResponse(Call<Result> call, Response<Result> response) {
-                mScrollListener.setLoading(false);
-                if (response.isSuccessful() && response.body() != null) {
-                    mAdapter.addAll(response.body().getResults());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Result> call, Throwable t) {
-                mScrollListener.setLoading(false);
-            }
-        });
+    private void loadData(int page) {
+        ((App)getApplication())
+                .getPeopleRestService()
+                .getAllPeoples(page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mRestObserver);
     }
 
     @Override
@@ -145,6 +142,7 @@ public class HomeActivity
         private Integer mLastItem;
         private Integer mThreshold = 5;
         private Boolean mIsLoading = false;
+        private Boolean mIsFullLoaded = false;
 
         @Override
         public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
@@ -155,9 +153,9 @@ public class HomeActivity
             mTotalCount = mRecyclerView.getLayoutManager().getItemCount();
             mLastItem = ((LinearLayoutManager)mRecyclerView.getLayoutManager())
                     .findLastVisibleItemPosition();
-            if (!mIsLoading && mTotalCount < (mLastItem + mThreshold)
-                    && mTotalCount < mAdapter.getTotalCount()) {
-                fetchData((mTotalCount / 10) + 1);
+            if (!mIsLoading && mTotalCount < (mLastItem + mThreshold) && !mIsFullLoaded) {
+                mAdapter.showProgress();
+                loadData((mTotalCount / 10) + 1);
                 setLoading(true);
             }
         }
@@ -169,6 +167,10 @@ public class HomeActivity
 
         public void setLoading(Boolean loading) {
             mIsLoading = loading;
+        }
+
+        public void setFullLoaded(Boolean fullLoaded) {
+            mIsFullLoaded = fullLoaded;
         }
     }
 }
