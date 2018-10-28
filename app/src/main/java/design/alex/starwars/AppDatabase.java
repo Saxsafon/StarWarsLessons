@@ -8,7 +8,7 @@ import design.alex.starwars.model.dao.PeopleDao;
 import design.alex.starwars.model.entity.Film;
 import design.alex.starwars.model.entity.People;
 
-@Database(entities = { People.class, Film.class }, version = 2, exportSchema = false)
+@Database(entities = { People.class, Film.class }, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract PeopleDao getPeopleDao();

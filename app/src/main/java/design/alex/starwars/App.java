@@ -1,10 +1,7 @@
 package design.alex.starwars;
 
 import android.app.Application;
-import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
-import android.arch.persistence.room.migration.Migration;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -32,10 +29,6 @@ public class App extends Application {
     private void buildDb() {
         mAppDatabase = Room
                 .databaseBuilder(getApplicationContext(), AppDatabase.class, "star-wars")
-                .addMigrations(new Migration(1, 2) {
-                    @Override
-                    public void migrate(@NonNull SupportSQLiteDatabase database) { }
-                })
                 .build();
     }
 
