@@ -8,4 +8,10 @@
     <string name="action_load_data">Загрузить данные</string>
 
     <string name="failure_title">Ошибка</string>
+
+    <string name="item_card_people_birth">Год рождения: %1$s</string>
+    <string name="item_card_people_height">Рост: %1$s</string>
+    <string name="item_card_people_mass">Вес: %1$s</string>
+    <string name="item_card_people_gender">Пол: %1$s</string>
+
 </resources>

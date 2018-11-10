@@ -1,17 +1,24 @@
 package design.alex.starwars;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import design.alex.starwars.model.entity.People;
 import design.alex.starwars.model.rest.RawPeople;
 
@@ -92,32 +99,52 @@ public class HeroRecyclerAdapter
 
 
 
-    public class HeroViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class HeroViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mHeroNameTextView;
-        private LinearLayout mContainer;
+
+        @BindView(R.id.image) ImageView mHeroImageView;
+        @BindView(R.id.person_name_text_view) TextView mHeroNameTextView;
+        @BindView(R.id.person_birth_text_view) TextView mHeroBirthTextView;
+        @BindView(R.id.person_height_text_view) TextView mHeroHeightTextView;
+        @BindView(R.id.person_mass_text_view) TextView mHeroMassTextView;
+        @BindView(R.id.person_gender_text_view) TextView mHeroGenderTextView;
+
         private int mPosition;
 
         HeroViewHolder(@NonNull View itemView) {
             super(itemView);
-            mContainer = itemView.findViewById(R.id.container);
-            mHeroNameTextView = itemView.findViewById(R.id.person_name_text_view);
-            mContainer.setOnClickListener(this);
+            ButterKnife.bind(this, itemView);
         }
 
         void setPosition(int position) {
             mPosition = position;
         }
 
-        @Override
-        public void onClick(View view) {
+        @OnClick(R.id.container)
+        public void onClick() {
             if (mListener != null) {
                 mListener.onClickPeople(mPeoples.get(mPosition));
             }
         }
 
         public void bind(People people) {
+            Resources resources = mHeroNameTextView.getResources();
+
+            Glide.with(mHeroImageView.getContext()).load(people.getImageUrl()).into(mHeroImageView);
+
             mHeroNameTextView.setText(people.getName());
+            mHeroBirthTextView.setText(resources.getString(
+                    R.string.item_card_people_birth, people.getBirthYear()
+            ));
+            mHeroHeightTextView.setText(resources.getString(
+                    R.string.item_card_people_height, String.valueOf(people.getHeight())
+            ));
+            mHeroMassTextView.setText(resources.getString(
+                    R.string.item_card_people_mass, String.valueOf(people.getMass())
+            ));
+            mHeroGenderTextView.setText(resources.getString(
+                    R.string.item_card_people_gender, people.getGender()
+            ));
         }
     }
 

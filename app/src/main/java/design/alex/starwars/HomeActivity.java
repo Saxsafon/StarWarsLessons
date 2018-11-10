@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -16,6 +17,8 @@ import android.widget.FrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import design.alex.starwars.model.entity.People;
 import design.alex.starwars.model.rest.RawPeople;
 import design.alex.starwars.model.rest.RawResult;
@@ -31,11 +34,11 @@ public class HomeActivity
 
     private static final int LIMIT = 10;
 
-    FrameLayout mProgressLayout;
-    FrameLayout mContentLayout;
-    FrameLayout mErrorLayout;
-
-    RecyclerView mRecyclerView;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.progress) FrameLayout mProgressLayout;
+    @BindView(R.id.content) FrameLayout mContentLayout;
+    @BindView(R.id.error) FrameLayout mErrorLayout;
+    @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
     private HeroRecyclerAdapter mAdapter;
     private RecyclerScrollListener mScrollListener;
@@ -78,7 +81,12 @@ public class HomeActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        bindViews();
+
+        ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle(R.string.app_name);
+
         setupList();
         setupListener();
         showProgress();
@@ -88,14 +96,8 @@ public class HomeActivity
     private void startCardActivity(Long id) {
         Intent intent = new Intent(this, CardActivity.class);
         intent.putExtra(CardActivity.PARAM_ID, id);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
-    }
-
-    private void bindViews() {
-        mProgressLayout = findViewById(R.id.progress);
-        mContentLayout = findViewById(R.id.content);
-        mErrorLayout = findViewById(R.id.error);
-        mRecyclerView = findViewById(R.id.recycler_view);
     }
 
     private void setupList() {
@@ -153,7 +155,7 @@ public class HomeActivity
                     people.setHeight(Integer.parseInt(rawPeople.getHeight()));
                 } catch (NumberFormatException ignored) {}
                 try {
-                    people.setMass(Integer.getInteger(rawPeople.getMass()));
+                    people.setMass(Integer.parseInt(rawPeople.getMass()));
                 } catch (NumberFormatException ignored) {}
 
                 people.setHairColor(rawPeople.getHairColor());
