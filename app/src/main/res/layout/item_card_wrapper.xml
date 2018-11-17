@@ -32,32 +32,31 @@
             <TextView
                 android:id="@+id/person_name_text_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="name"/>
+                android:layout_height="wrap_content"/>
 
-            <TextView
+            <design.alex.starwars.ui.widgets.TemplateTextView
                 android:id="@+id/person_birth_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="birth"/>
+                app:template="@string/item_card_people_birth"/>
 
-            <TextView
+            <design.alex.starwars.ui.widgets.TemplateTextView
                 android:id="@+id/person_height_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="height"/>
+                app:template="@string/item_card_people_height"/>
 
-            <TextView
+            <design.alex.starwars.ui.widgets.TemplateTextView
                 android:id="@+id/person_mass_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="mass"/>
+                app:template="@string/item_card_people_mass"/>
 
-            <TextView
+            <design.alex.starwars.ui.widgets.TemplateTextView
                 android:id="@+id/person_gender_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="gender"/>
+                app:template="@string/item_card_people_gender"/>
 
         </LinearLayout>
 

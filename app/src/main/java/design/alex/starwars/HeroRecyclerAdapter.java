@@ -21,6 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import design.alex.starwars.model.entity.People;
 import design.alex.starwars.model.rest.RawPeople;
+import design.alex.starwars.ui.widgets.TemplateTextView;
 
 public class HeroRecyclerAdapter
         extends
@@ -104,10 +105,10 @@ public class HeroRecyclerAdapter
 
         @BindView(R.id.image) ImageView mHeroImageView;
         @BindView(R.id.person_name_text_view) TextView mHeroNameTextView;
-        @BindView(R.id.person_birth_text_view) TextView mHeroBirthTextView;
-        @BindView(R.id.person_height_text_view) TextView mHeroHeightTextView;
-        @BindView(R.id.person_mass_text_view) TextView mHeroMassTextView;
-        @BindView(R.id.person_gender_text_view) TextView mHeroGenderTextView;
+        @BindView(R.id.person_birth_text_view) TemplateTextView mHeroBirthTextView;
+        @BindView(R.id.person_height_text_view) TemplateTextView mHeroHeightTextView;
+        @BindView(R.id.person_mass_text_view) TemplateTextView mHeroMassTextView;
+        @BindView(R.id.person_gender_text_view) TemplateTextView mHeroGenderTextView;
 
         private int mPosition;
 
@@ -128,23 +129,13 @@ public class HeroRecyclerAdapter
         }
 
         public void bind(People people) {
-            Resources resources = mHeroNameTextView.getResources();
-
             Glide.with(mHeroImageView.getContext()).load(people.getImageUrl()).into(mHeroImageView);
 
             mHeroNameTextView.setText(people.getName());
-            mHeroBirthTextView.setText(resources.getString(
-                    R.string.item_card_people_birth, people.getBirthYear()
-            ));
-            mHeroHeightTextView.setText(resources.getString(
-                    R.string.item_card_people_height, String.valueOf(people.getHeight())
-            ));
-            mHeroMassTextView.setText(resources.getString(
-                    R.string.item_card_people_mass, String.valueOf(people.getMass())
-            ));
-            mHeroGenderTextView.setText(resources.getString(
-                    R.string.item_card_people_gender, people.getGender()
-            ));
+            mHeroBirthTextView.setTemplatedText(people.getBirthYear());
+            mHeroHeightTextView.setTemplatedText(String.valueOf(people.getHeight()));
+            mHeroMassTextView.setTemplatedText(String.valueOf(people.getMass()));
+            mHeroGenderTextView.setTemplatedText(people.getGender());
         }
     }
 
