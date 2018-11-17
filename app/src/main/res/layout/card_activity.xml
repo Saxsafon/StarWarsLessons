@@ -31,49 +31,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_collapseMode="pin"
-                style="@style/AppTheme.ActionBar"/>
+                style="@style/AppTheme.ActionBar.Transparent"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:padding="16dp">
 
-            <design.alex.starwars.ui.widgets.TemplateTextView
-                android:id="@+id/person_birth_text_view"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:template="@string/item_card_people_birth"/>
+                android:orientation="vertical">
 
-            <design.alex.starwars.ui.widgets.TemplateTextView
-                android:id="@+id/person_height_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:template="@string/item_card_people_height"/>
+                <design.alex.starwars.ui.widgets.TemplateTextView
+                    android:id="@+id/person_birth_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:template="@string/item_card_people_birth"/>
 
-            <design.alex.starwars.ui.widgets.TemplateTextView
-                android:id="@+id/person_mass_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:template="@string/item_card_people_mass"/>
+                <design.alex.starwars.ui.widgets.TemplateTextView
+                    android:id="@+id/person_height_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:template="@string/item_card_people_height"/>
 
-            <design.alex.starwars.ui.widgets.TemplateTextView
-                android:id="@+id/person_gender_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:template="@string/item_card_people_gender"/>
+                <design.alex.starwars.ui.widgets.TemplateTextView
+                    android:id="@+id/person_mass_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:template="@string/item_card_people_mass"/>
 
-        </LinearLayout>
+                <design.alex.starwars.ui.widgets.TemplateTextView
+                    android:id="@+id/person_gender_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:template="@string/item_card_people_gender"/>
 
-    </android.support.constraint.ConstraintLayout>
+            </LinearLayout>
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
 
 </android.support.design.widget.CoordinatorLayout>

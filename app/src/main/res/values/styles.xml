@@ -21,4 +21,8 @@
         <item name="theme">@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
 
+    <style name="AppTheme.ActionBar.Transparent">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
 </resources>

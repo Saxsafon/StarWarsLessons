@@ -15,15 +15,13 @@ public class App extends Application {
     // Сервис для получения персонажей
     private RestApiPeoples mPeopleRestService;
 
-    private AppDatabase mAppDatabase;
+    private static AppDatabase mAppDatabase;
 
     @Override
     public void onCreate() {
         super.onCreate();
         buildRest();
         buildDb();
-        Log.d("TAG", "onCreateApplication");
-
     }
 
     private void buildDb() {
@@ -46,7 +44,7 @@ public class App extends Application {
         return mPeopleRestService;
     }
 
-    public AppDatabase getAppDatabase() {
+    public static AppDatabase getAppDatabase() {
         return mAppDatabase;
     }
 }
