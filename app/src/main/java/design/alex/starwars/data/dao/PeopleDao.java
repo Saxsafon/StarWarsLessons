@@ -1,4 +1,4 @@
-package design.alex.starwars.model.dao;
+package design.alex.starwars.data.dao;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
@@ -7,7 +7,7 @@ import android.arch.persistence.room.Query;
 
 import java.util.List;
 
-import design.alex.starwars.model.entity.People;
+import design.alex.starwars.data.model.entity.People;
 import io.reactivex.Single;
 
 @Dao

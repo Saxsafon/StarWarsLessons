@@ -1,4 +1,4 @@
-package design.alex.starwars.model.dao;
+package design.alex.starwars.data.dao;
 
 import android.arch.persistence.room.Dao;
 

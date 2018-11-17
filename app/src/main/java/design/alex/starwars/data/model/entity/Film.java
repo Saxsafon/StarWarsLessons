@@ -1,4 +1,4 @@
-package design.alex.starwars.model.entity;
+package design.alex.starwars.data.model.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

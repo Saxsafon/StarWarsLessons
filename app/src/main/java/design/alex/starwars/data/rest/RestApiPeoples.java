@@ -1,6 +1,6 @@
-package design.alex.starwars.rest;
+package design.alex.starwars.data.rest;
 
-import design.alex.starwars.model.rest.RawResult;
+import design.alex.starwars.data.model.rest.RawResult;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;

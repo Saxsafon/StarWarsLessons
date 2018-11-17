@@ -1,4 +1,4 @@
-package design.alex.starwars.model.rest;
+package design.alex.starwars.data.model.rest;
 
 import com.google.gson.annotations.SerializedName;
 

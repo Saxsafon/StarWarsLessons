@@ -1,4 +1,4 @@
-package design.alex.starwars;
+package design.alex.starwars.ui.card;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,7 +12,9 @@ import com.bumptech.glide.Glide;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import design.alex.starwars.model.entity.People;
+import design.alex.starwars.App;
+import design.alex.starwars.R;
+import design.alex.starwars.data.model.entity.People;
 import design.alex.starwars.ui.widgets.TemplateTextView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;

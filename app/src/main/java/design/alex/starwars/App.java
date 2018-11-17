@@ -2,18 +2,18 @@ package design.alex.starwars;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
-import android.util.Log;
 
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-import design.alex.starwars.rest.RestApiPeoples;
+import design.alex.starwars.data.AppDatabase;
+import design.alex.starwars.data.rest.RestApiPeoples;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
 
     // Сервис для получения персонажей
-    private RestApiPeoples mPeopleRestService;
+    private static RestApiPeoples mPeopleRestService;
 
     private static AppDatabase mAppDatabase;
 
@@ -40,7 +40,7 @@ public class App extends Application {
         mPeopleRestService = retrofit.create(RestApiPeoples.class);
     }
 
-    public RestApiPeoples getPeopleRestService() {
+    public static RestApiPeoples getPeopleRestService() {
         return mPeopleRestService;
     }
 

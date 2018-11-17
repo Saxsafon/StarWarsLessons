@@ -1,14 +1,11 @@
-package design.alex.starwars;
+package design.alex.starwars.ui.home.adapter;
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -19,8 +16,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import design.alex.starwars.model.entity.People;
-import design.alex.starwars.model.rest.RawPeople;
+import design.alex.starwars.R;
+import design.alex.starwars.data.model.entity.People;
 import design.alex.starwars.ui.widgets.TemplateTextView;
 
 public class HeroRecyclerAdapter
