@@ -12,6 +12,9 @@ import butterknife.ButterKnife;
 import design.alex.starwars.R;
 import design.alex.starwars.ui.home.HomeActivity;
 
+/**
+ * Экран стартовой страницы
+ */
 public class SplashScreenActivity
         extends
         AppCompatActivity
@@ -19,8 +22,10 @@ public class SplashScreenActivity
         Animator.AnimatorListener,
         SplashScreenActivityView {
 
+    /** Картинка логотипа на странице */
     @BindView(R.id.logo) ImageView mLogo;
 
+    /** Презентер */
     private SplashScreenActivityPresenter mPresenter;
 
     @Override

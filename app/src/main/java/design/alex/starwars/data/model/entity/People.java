@@ -2,11 +2,18 @@ package design.alex.starwars.data.model.entity;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 
-@Entity(tableName = "peoples", indices = { @Index("id")})
+/**
+ * Объкт персонажа для хранения в БД
+ */
+@Entity(
+        tableName = "peoples", // название таблицы
+        indices = { @Index("id")} //индекс по столбцу
+)
 public class People {
 
     @PrimaryKey
@@ -44,6 +51,13 @@ public class People {
     private String mImageUrl;
 
     public People() { }
+
+    @Ignore // у объекта БД должен быть только один не игнорированный конструктор
+    public People(long id, String name, String imageUrl) {
+        mId = id;
+        mName = name;
+        mImageUrl = imageUrl;
+    }
 
     public long getId() {
         return mId;

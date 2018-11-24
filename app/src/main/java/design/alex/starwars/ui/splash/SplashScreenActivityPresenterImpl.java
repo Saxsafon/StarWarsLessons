@@ -2,6 +2,7 @@ package design.alex.starwars.ui.splash;
 
 public class SplashScreenActivityPresenterImpl implements SplashScreenActivityPresenter {
 
+    /** view к которой прицеплен презентер */
     private SplashScreenActivityView mView;
 
     @Override

@@ -7,10 +7,14 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import design.alex.starwars.data.AppDatabase;
 import design.alex.starwars.data.rest.RestApiPeoples;
+import design.alex.starwars.di.component.ApplicationComponent;
+import okhttp3.Cache;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends Application {
+
+    private ApplicationComponent mAppComponent;
 
     // Сервис для получения персонажей
     private static RestApiPeoples mPeopleRestService;
@@ -20,6 +24,9 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        mAppComponent = ApplicationComponent.buildComponent(this);
+        mAppComponent.inject(this);
+
         buildRest();
         buildDb();
     }

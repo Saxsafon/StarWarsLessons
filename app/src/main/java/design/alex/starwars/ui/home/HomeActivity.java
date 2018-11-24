@@ -1,35 +1,27 @@
 package design.alex.starwars.ui.home;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import design.alex.starwars.App;
 import design.alex.starwars.ui.card.CardActivity;
 import design.alex.starwars.ui.home.adapter.HeroRecyclerAdapter;
 import design.alex.starwars.R;
 import design.alex.starwars.data.model.entity.People;
-import design.alex.starwars.data.model.rest.RawPeople;
-import design.alex.starwars.data.model.rest.RawResult;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import design.alex.starwars.ui.home.helpers.RecyclerScrollListener;
 
 
 public class HomeActivity
@@ -37,12 +29,13 @@ public class HomeActivity
         AppCompatActivity
         implements
         HeroRecyclerAdapter.Listener,
-        HomeActivityView {
+        HomeActivityView, RecyclerScrollListener.Listener {
 
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.progress) FrameLayout mProgressLayout;
     @BindView(R.id.content) FrameLayout mContentLayout;
     @BindView(R.id.error) FrameLayout mErrorLayout;
+    @BindView(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
     private HeroRecyclerAdapter mAdapter;
@@ -87,6 +80,11 @@ public class HomeActivity
     }
 
     @Override
+    public void fetchData(int page) {
+        mPresenter.fetchData(page);
+    }
+
+    @Override
     public void setFullLoaded(boolean isFullLoaded) {
         mScrollListener.setFullLoaded(isFullLoaded);
     }
@@ -113,7 +111,6 @@ public class HomeActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
@@ -124,7 +121,6 @@ public class HomeActivity
 
         mPresenter = new HomeActivityPresenterImpl();
         mPresenter.setView(this);
-
         mPresenter.onCreate();
     }
 
@@ -132,60 +128,12 @@ public class HomeActivity
         mAdapter = new HeroRecyclerAdapter();
         mAdapter.setListener(this);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void setupListener() {
-        mScrollListener = new RecyclerScrollListener();
+        mScrollListener = new RecyclerScrollListener(mRecyclerView.getLayoutManager());
+        mScrollListener.setListener(this);
         mRecyclerView.addOnScrollListener(mScrollListener);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        } else {
-            mRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        }
-    }
-
-    private class RecyclerScrollListener extends RecyclerView.OnScrollListener {
-
-        private Integer mTotalCount;
-        private Integer mLastItem;
-        private Integer mThreshold = 5;
-        private Boolean mIsLoading = false;
-        private Boolean mIsFullLoaded = false;
-
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (mRecyclerView.getLayoutManager() == null) {
-                return;
-            }
-            mTotalCount = mRecyclerView.getLayoutManager().getItemCount();
-            mLastItem = ((LinearLayoutManager)mRecyclerView.getLayoutManager())
-                    .findLastVisibleItemPosition();
-            if (!mIsLoading && mTotalCount < (mLastItem + mThreshold) && !mIsFullLoaded) {
-                mAdapter.showProgress();
-                mPresenter.fetchData((mTotalCount / 10) + 1);
-                setLoading(true);
-            }
-        }
-
-        @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        public void setLoading(Boolean loading) {
-            mIsLoading = loading;
-        }
-
-        public void setFullLoaded(Boolean fullLoaded) {
-            mIsFullLoaded = fullLoaded;
-        }
     }
 }
 

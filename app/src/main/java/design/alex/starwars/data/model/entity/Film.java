@@ -8,24 +8,28 @@ import android.arch.persistence.room.PrimaryKey;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
-@Entity(tableName = "films", indices = @Index({"people_id"}), foreignKeys = @ForeignKey(
-        entity = People.class,
-        parentColumns = "id",
-        childColumns = "people_id",
-        onDelete = CASCADE
+/**
+ * Объкт фильма для хранения в БД
+ */
+@Entity(
+        tableName = "films", // название таблицы
+        indices = @Index({"people_id"}), //индекс по столбцу
+        foreignKeys = @ForeignKey( // внешний ключ
+                entity = People.class, // к какой таблице привязан внешний ключ
+                parentColumns = "id", // к какому столбцу привязан ключ в текущей таблице
+                childColumns = "people_id", // к какому столбцу привязан ключ во внешней таблице
+                onDelete = CASCADE // как обрабатывается удаление данных из внешней таблицы
 ))
 public class Film {
 
-    @PrimaryKey
-    @ColumnInfo(name = "id")
+    @PrimaryKey // Первичный ключ
+    @ColumnInfo(name = "id") // Название столбца
     private long mId;
 
     @ColumnInfo(name = "people_id")
     private long mPeopleId;
 
-    public Film() {
-
-    }
+    public Film() { }
 
     public long getId() {
         return mId;

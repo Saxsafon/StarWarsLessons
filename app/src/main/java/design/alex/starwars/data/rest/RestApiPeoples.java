@@ -7,6 +7,11 @@ import retrofit2.http.Query;
 
 public interface RestApiPeoples {
 
+    /**
+     * Получение списка персонажей
+     * @param page - страница
+     * @return RawResult - сырой результат
+     */
     @GET("/api/people/?format=json")
     Observable<RawResult> getAllPeoples(
             @Query("page") Integer page

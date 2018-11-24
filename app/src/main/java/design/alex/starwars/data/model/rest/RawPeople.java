@@ -2,6 +2,9 @@ package design.alex.starwars.data.model.rest;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Объект персонажа в сыром виде от API
+ */
 public class RawPeople {
 
     @SerializedName("name")

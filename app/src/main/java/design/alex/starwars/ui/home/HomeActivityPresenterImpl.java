@@ -2,13 +2,12 @@ package design.alex.starwars.ui.home;
 
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import design.alex.starwars.App;
+import design.alex.starwars.data.cache.PeopleCacheTransformer;
 import design.alex.starwars.data.model.entity.People;
-import design.alex.starwars.data.model.rest.RawPeople;
-import design.alex.starwars.data.model.rest.RawResult;
+import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -55,7 +54,9 @@ public class HomeActivityPresenterImpl implements HomeActivityPresenter {
     @Override
     public void fetchData(int page) {
         mPage = page;
+        mView.showLoader();
         loadData(mPage);
+        mView.setLoading(true);
     }
 
     @Override
@@ -70,42 +71,20 @@ public class HomeActivityPresenterImpl implements HomeActivityPresenter {
         mView.openCardActivity(people.getId());
     }
 
+    /**
+     * Загрузка данных из репозитория
+     * @param page - страница
+     */
     private void loadData(int page) {
         App.getPeopleRestService()
                 .getAllPeoples(page)
-                .map(result -> saveDb(result))
+                .onErrorResumeNext(throwable -> {
+                    mView.setFullLoaded(true);
+                    return Observable.error(throwable);
+                })
+                .compose(new PeopleCacheTransformer())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mRestObserver);
-    }
-
-    private List<People> saveDb(RawResult result) {
-        List<People> peopleList = new ArrayList<>();
-        if (result != null && result.getResults() != null && !result.getResults().isEmpty()) {
-            for (RawPeople rawPeople : result.getResults()) {
-                People people = new People();
-                String id = rawPeople.getUrl().replaceAll("[\\D+]","");
-                people.setId(Long.parseLong(id));
-                people.setImageUrl(
-                        String.format("https://starwars-visualguide.com/assets/img/characters/%s.jpg", people.getId())
-                );
-                people.setName(rawPeople.getName());
-                try {
-                    people.setHeight(Integer.parseInt(rawPeople.getHeight()));
-                } catch (NumberFormatException ignored) {}
-                try {
-                    people.setMass(Integer.parseInt(rawPeople.getMass()));
-                } catch (NumberFormatException ignored) {}
-
-                people.setHairColor(rawPeople.getHairColor());
-                people.setEyeColor(rawPeople.getEyeColor());
-                people.setBirthYear(rawPeople.getBirthYear());
-                people.setGender(rawPeople.getGender());
-                people.setHomeWorld(rawPeople.getHoumeWorld());
-                App.getAppDatabase().getPeopleDao().insert(people);
-                peopleList.add(people);
-            }
-        }
-        return peopleList;
     }
 }
