@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import design.alex.starwars.Constants;
 import design.alex.starwars.data.rest.RestApiPeoples;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
@@ -20,9 +21,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 @Module
 public class NetModule {
-
-    /** Базовый урл */
-    private static final String BASE_URL = "https://swapi.co/";
 
     public NetModule() { }
 
@@ -46,7 +44,7 @@ public class NetModule {
     Retrofit getRetrofit(OkHttpClient client) {
         return new Retrofit
                 .Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)

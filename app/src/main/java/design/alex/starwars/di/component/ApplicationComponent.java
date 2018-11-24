@@ -5,6 +5,7 @@ import android.content.Context;
 import javax.inject.Singleton;
 
 import dagger.Component;
+
 import design.alex.starwars.App;
 import design.alex.starwars.data.AppDatabase;
 import design.alex.starwars.data.rest.RestApiPeoples;
