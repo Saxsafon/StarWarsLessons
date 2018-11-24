@@ -35,7 +35,6 @@ public class HomeActivity
     @BindView(R.id.progress) FrameLayout mProgressLayout;
     @BindView(R.id.content) FrameLayout mContentLayout;
     @BindView(R.id.error) FrameLayout mErrorLayout;
-    @BindView(R.id.coordinator) CoordinatorLayout mCoordinatorLayout;
     @BindView(R.id.recycler_view) RecyclerView mRecyclerView;
 
     private HeroRecyclerAdapter mAdapter;

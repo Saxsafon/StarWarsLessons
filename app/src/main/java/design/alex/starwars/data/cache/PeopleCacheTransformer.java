@@ -1,12 +1,10 @@
 package design.alex.starwars.data.cache;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import design.alex.starwars.App;
 import design.alex.starwars.data.mappres.PeopleMapper;
 import design.alex.starwars.data.model.entity.People;
-import design.alex.starwars.data.model.rest.RawPeople;
 import design.alex.starwars.data.model.rest.RawResult;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;

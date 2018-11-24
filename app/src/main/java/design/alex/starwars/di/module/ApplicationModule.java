@@ -26,5 +26,4 @@ public class ApplicationModule {
     Context getContext() {
         return mContext;
     }
-
 }
